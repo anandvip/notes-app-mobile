@@ -192,8 +192,8 @@
       const notesContainer = document.getElementById('notes-container');
       notesContainer.innerHTML = ''; // Clear previous notes
       const notes = getNotesFromStorage();
-      notes.forEach((note) => {
-        notesContainer.appendChild(createNoteCard(note));
+      notes.forEach((note, index) => {
+        notesContainer.appendChild(createNoteCard(note, index));
       });
       updateNoteInfo(notes.length);
     };
@@ -232,18 +232,42 @@
       localStorage.setItem('notes', JSON.stringify(notes));
     };
 
-    const createNoteCard = (note) => {
+    const createNoteCard = (note, index) => {
       const noteCard = document.createElement('div');
       noteCard.className = 'note-card';
 
       noteCard.innerHTML = `
-        <h2>${note.title || 'Untitled'}</h2>
+        <h2 contenteditable="true" onBlur="updateNoteTitle(${index}, this.innerText)">${note.title || 'Untitled'}</h2>
         <p>Author: ${note.author || 'Unknown'}</p>
         <p>Created at: ${note.timestamp || 'Unknown'}</p>
-        <p>${note.content}</p>
+        <p contenteditable="true" onBlur="updateNoteContent(${index}, this.innerText)">${note.content}</p>
+        <button onclick="deleteNote(${index})">Delete</button>
       `;
 
       return noteCard;
+    };
+
+    const updateNoteTitle = (index, newTitle) => {
+      const notes = getNotesFromStorage();
+      notes[index].title = newTitle;
+      saveNotesToStorage(notes);
+    };
+
+    const updateNoteContent = (index, newContent) => {
+      const notes = getNotesFromStorage();
+      notes[index].content = newContent;
+      saveNotesToStorage(notes);
+    };
+
+    const saveNotesToStorage = (notes) => {
+      localStorage.setItem('notes', JSON.stringify(notes));
+      displayNotes();
+    };
+
+    const deleteNote = (index) => {
+      const notes = getNotesFromStorage();
+      notes.splice(index, 1);
+      saveNotesToStorage(notes);
     };
   </script>
 </body>
