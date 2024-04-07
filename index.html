@@ -223,7 +223,12 @@
         saveNoteToStorage(newNote);
         displayNotes();
         addNoteDialog.close(); // Close the dialog after adding the note
+        resetAddNoteForm(); // Reset the form fields
       }
+    };
+
+    const resetAddNoteForm = () => {
+      document.getElementById('addNoteForm').reset();
     };
 
     const saveNoteToStorage = (note) => {
