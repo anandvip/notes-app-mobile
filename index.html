@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Taking App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f0f0f5; /* Light, neutral background */
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      background-color: #00D8CA; /* Turquoise header */
+      color: #0A1F46; /* Dark blue text */
+      border-radius: 5px;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      margin-bottom: 20px;
+    }
+
+    #notes-container {
+      width: 100%;
+      max-width: 600px; /* Cap max width */
+    }
+
+    .note-card {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .note-card:hover {
+      transform: translateY(-3px); /* Slight lift on hover */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Add your existing styles here */
+
+    #add-note-button {
+      background-color: #0A1F46; /* Dark blue button */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #addNoteDialog {
+      display: none; /* Hidden by default */
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    #addNoteDialog[open] {
+      display: block; /* Make the dialog visible when 'open' */
+    }
+
+    /* Media query for smaller screens */
+    @media (max-width: 600px) {
+      header {
+        padding: 10px;
+      }
+
+      #addNoteDialog {
+        width: 100%;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome, <span id="userGreeting"></span></h1>
+    <div class="note-info">
+      You have <span id="noteCount">0</span> notes and <span id="wordCount">0</span> words in this notes app.
+    </div>
+    <select id="authorSelect">
+      <option value="User 1">User 1</option>
+      <!-- Add more options for other authors if needed -->
+      <option value="custom">Custom</option>
+    </select>
+    <input type="text" id="customAuthorInput" placeholder="Enter custom author name" style="display: none;">
+    <button id="setCustomAuthorButton">is Author</button>
+  </header>
+
+  <div id="notes-container">
+    <!-- Notes will be displayed here -->
+  </div>
+
+  <button id="add-note-button">+</button>
+
+  <dialog id="addNoteDialog">
+    <form id="addNoteForm">
+      <label for="noteTitle">Title:</label><br>
+      <input type="text" id="noteTitle"><br>
+      <label for="noteContent">Content:</label><br>
+      <textarea id="noteContent"></textarea><br>
+      <button type="submit">Add</button>
+      <button type="button" id="close-dialog-button">Close</button>
+    </form>
+  </dialog>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', initialize);
+
+    function initialize() {
+      const authorSelect = document.getElementById('authorSelect');
+      const customAuthorInput = document.getElementById('customAuthorInput');
+      const setCustomAuthorButton = document.getElementById('setCustomAuthorButton');
+      const addNoteButton = document.getElementById('add-note-button');
+      const addNoteDialog = document.getElementById('addNoteDialog');
+
+      if (!authorSelect || !customAuthorInput || !setCustomAuthorButton || !addNoteButton || !addNoteDialog) {
+        console.error('Error: One or more elements not found');
+        return;
+      }
+
+      authorSelect.addEventListener('change', changeAuthor);
+      setCustomAuthorButton.addEventListener('click', setCustomAuthor);
+      addNoteButton.addEventListener('click', () => {
+        addNoteDialog.showModal();
+      });
+
+      const addNoteForm = document.getElementById('addNoteForm');
+      addNoteForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent form submission
+        addNote();
+      });
+
+      // Close button functionality
+      const closeDialogButton = document.getElementById('close-dialog-button');
+      closeDialogButton.addEventListener('click', () => {
+        addNoteDialog.close();
+      });
+
+      loadUserInfo();
+      displayNotes();
+    }
+
+    const loadUserInfo = () => {
+      const currentAuthor = localStorage.getItem('currentAuthor') || 'User 1';
+      document.getElementById('userGreeting').innerText = currentAuthor;
+      document.getElementById('authorSelect').value = currentAuthor;
+    };
+
+    const changeAuthor = () => {
+      const currentAuthor = document.getElementById('authorSelect').value;
+      customAuthorInput.style.display = currentAuthor === 'custom' ? 'inline' : 'none';
+      localStorage.setItem('currentAuthor', currentAuthor);
+      loadUserInfo();
+      displayNotes();
+    };
+
+    const setCustomAuthor = () => {
+      const customAuthorName = customAuthorInput.value.trim();
+      if (customAuthorName) {
+        const authorSelect = document.getElementById('authorSelect');
+        authorSelect.appendChild(createOption(customAuthorName));
+        authorSelect.value = customAuthorName;
+        customAuthorInput.value = '';
+        localStorage.setItem('currentAuthor', customAuthorName);
+        loadUserInfo();
+        displayNotes();
+      }
+    };
+
+    const createOption = (value, text = value) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      return option;
+    };
+
+    const displayNotes = () => {
+      const notesContainer = document.getElementById('notes-container');
+      notesContainer.innerHTML = ''; // Clear previous notes
+      const notes = getNotesFromStorage();
+      notes.forEach((note) => {
+        notesContainer.appendChild(createNoteCard(note));
+      });
+      updateNoteInfo(notes.length);
+    };
+
+    const getNotesFromStorage = () => {
+      return JSON.parse(localStorage.getItem('notes')) || [];
+    };
+
+    const updateNoteInfo = (noteCount) => {
+      document.getElementById('noteCount').innerText = noteCount;
+      const wordCount = getWordCount();
+      document.getElementById('wordCount').innerText = wordCount;
+    };
+
+    const getWordCount = () => {
+      const notes = getNotesFromStorage();
+      return notes.reduce((total, note) => total + (note.content.trim().split(/\s+/).length || 0), 0);
+    };
+
+    const addNote = () => {
+      const noteTitle = document.getElementById('noteTitle').value.trim();
+      const noteContent = document.getElementById('noteContent').value.trim();
+      const currentAuthor = document.getElementById('authorSelect').value;
+      if (noteTitle || noteContent) {
+        const timeStamp = new Date().toLocaleString();
+        const newNote = { title: noteTitle, content: noteContent, author: currentAuthor, timestamp: timeStamp };
+        saveNoteToStorage(newNote);
+        displayNotes();
+        addNoteDialog.close(); // Close the dialog after adding the note
+      }
+    };
+
+    const saveNoteToStorage = (note) => {
+      const notes = getNotesFromStorage();
+      notes.push(note);
+      localStorage.setItem('notes', JSON.stringify(notes));
+    };
+
+    const createNoteCard = (note) => {
+      const noteCard = document.createElement('div');
+      noteCard.className = 'note-card';
+
+      noteCard.innerHTML = `
+        <h2>${note.title || 'Untitled'}</h2>
+        <p>Author: ${note.author || 'Unknown'}</p>
+        <p>Created at: ${note.timestamp || 'Unknown'}</p>
+        <p>${note.content}</p>
+      `;
+
+      return noteCard;
+    };
+  </script>
+</body>
+</html>
