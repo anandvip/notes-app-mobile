@@ -128,6 +128,10 @@ dialog {
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.8);
 }
+    .contentP{
+      border-bottom:0.5pt solid;
+      padding:15px
+    }
   </style>
 </head>
 <body>
@@ -301,7 +305,7 @@ dialog::backdrop {
         <h2 contenteditable="true" onBlur="updateNoteTitle(${index}, this.innerText)">${note.title || 'Untitled'}</h2>
         <p>Author: ${note.author || 'Unknown'}</p>
         <p>Created at: <span id="creation-date-${index}">${note.timestamp || 'Unknown'}</span></p>
-        <p contenteditable="true" onBlur="updateNoteContent(${index}, this.innerText)">${note.content}</p>
+        <p class="contentP" contenteditable="true" onBlur="updateNoteContent(${index}, this.innerText)">${note.content}</p>
         <button onclick="deleteNote(${index})">Delete</button>
       `;
 
