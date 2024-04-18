@@ -19,8 +19,16 @@
             padding: 20px;
         }
         h2{
-            color:#6043f3
-
+            color:#6043f3;
+}
+        h2:before {
+    content: "title";
+    position: absolute;
+    top: 52px;
+    left: 7px;
+    font-size: 0.5rem;
+    color: #c7c7c7;
+    text-transform: uppercase;
 }
 
         header {
@@ -76,6 +84,15 @@
         }
       .contentP:focus {
   border-color: #0A1F46;
+}
+        p.contentP:before {
+    content: 'content';
+    position: absolute;
+    top: 149px;
+    left: 22px;
+    font-size: 0.5rem;
+    color: #918f8f;
+    text-transform: uppercase;
 }
 
         .lock-button {
