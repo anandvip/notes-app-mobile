@@ -132,6 +132,32 @@ h2:before {
   animation: tear-paper 1s ease-out forwards;
 }
     </style>
+    <style>
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .tag {
+      background-color:aqua;
+      border-radius: 15px;
+      padding: 2px 6px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 15px;
+  background-color:aqua;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+  </style>
 </head>
 
 <body>
@@ -334,6 +360,42 @@ deleteButton.addEventListener('click', () => {
     noteCard.remove();
   }, 1000);
 });
+  </script>
+    <script>
+    const tagInput = document.getElementById('tag-input');
+    const tagContainer = document.querySelector('.tag-container');
+
+    tagInput.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') {
+        const tag = document.createElement('span');
+        tag.classList.add('tag');
+        tag.textContent = tagInput.value;
+        tagContainer.appendChild(tag);
+        tagInput.value = '';
+
+        tag.addEventListener('click', () => {
+          tagContainer.removeChild(tag);
+        });
+      }
+    });
+  </script>
+  <script>
+    const hashtagRegex = /#\w+/g;
+function updateNoteTags(note) {
+  const tagsContainer = note.querySelector('.tags');
+  tagsContainer.innerHTML = '';
+
+  const hashtags = note.querySelector('.contentP').innerText.match(hashtagRegex);
+  if (hashtags) {
+    hashtags.forEach(hashtag => {
+      const tag = document.createElement('span');
+      tag.classList.add('tag');
+      tag.textContent = hashtag;
+      tagsContainer.appendChild(tag);
+    });
+  }
+}
+
   </script>
 </body>
 
