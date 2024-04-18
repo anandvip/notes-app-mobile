@@ -248,16 +248,34 @@ h2:before {
             const noteCard = document.createElement('div');
             noteCard.className = 'note-card';
 
-            noteCard.innerHTML = `
-                <h2 contenteditable="true" onBlur="updateNoteTitle(${index}, this.innerText)">${note ? note.title : 'Edit title'}</h2>
-                <p>Author: ${getAuthor()}</p>
-                <p>Created at: ${note ? note.timestamp : getCurrentDateTime()}</p>
-                <p class="contentP" contenteditable="true" onBlur="updateNoteContent(${index}, this.innerText)" title="edit content here!" data-placeholder="Add Content here!....">${note ? note.content : ''}</p>
-                <span class="index-number" style="position: absolute; bottom: 0; right: 0; font-size: 0.5rem;">${index + 1}</span> <!-- Display index number -->
-                <button onclick="deleteNote(${index})"><svg viewBox="0 0 448 512" width="10" title="trash-alt">
-  <path d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z" />
-</svg></button>
-            `;
+//             noteCard.innerHTML += `
+//                 <h2 contenteditable="true" onBlur="updateNoteTitle(${index}, this.innerText)">${note ? note.title : 'Edit title'}</h2>
+//                 <p>Author: ${getAuthor()}</p>
+//                 <p>Created at: ${note ? note.timestamp : getCurrentDateTime()}</p>
+//                 <p class="contentP" contenteditable="true" onBlur="updateNoteContent(${index}, this.innerText)" title="edit content here!" data-placeholder="Add Content here!....">${note ? note.content : ''}</p>
+//                 <span class="index-number" style="position: absolute; bottom: 0; right: 0; font-size: 0.5rem;">${index + 1}</span> <!-- Display index number -->
+//                 <button onclick="deleteNote(${index})"><svg viewBox="0 0 448 512" width="10" title="trash-alt">
+//   <path d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z" />
+// </svg></button>
+
+//             `;
+             noteCard.innerHTML += `
+    <div class="note">
+        <h2 contenteditable="true" onBlur="updateNoteTitle(${index}, this.innerText)">${note ? note.title : 'Edit title'}</h2>
+        <p>Author: ${getAuthor()}</p>
+        <p>Created at: ${note ? note.timestamp : getCurrentDateTime()}</p>
+        <p class="contentP" contenteditable="true" onBlur="updateNoteContent(${index}, this.innerText)" title="edit content here!" data-placeholder="Add Content here!....">${note ? note.content : ''}</p>
+        <div class="note-footer">
+            <input type="text" class="tag-input" placeholder="Add tags..." onkeyup="addTag(${index}, this.value)">
+            <div class="tag-container"></div>
+            <button onclick="deleteNote(${index})"><svg viewBox="0 0 448 512" width="10" title="trash-alt">
+                <path d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z" />
+            </svg></button>
+        </div>
+        <span class="index-number" style="position: absolute; bottom: 0; right: 0; font-size: 0.5rem;">${index + 1}</span> <!-- Display index number -->
+    </div>
+`;
+           
 
             notesContainer.appendChild(noteCard);
             if (!note) {
