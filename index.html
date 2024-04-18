@@ -95,6 +95,11 @@ h2:before {
     color: #918f8f;
     text-transform: uppercase;
 }
+        .contentP[contenteditable=true]:empty:before {
+  content: attr(data-placeholder);
+  color: #999;
+}
+
 
         .lock-button {
             fill: #0A1F46; /* Dark blue button */
