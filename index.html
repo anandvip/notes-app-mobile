@@ -363,19 +363,18 @@ deleteButton.addEventListener('click', () => {
       const tagInput = document.getElementById('tag-input');
     const tagContainer = document.querySelector('.tag-container');
 
-    tagInput.addEventListener('keyup', (event) => {
-      if (event.key === 'Enter') {
-        const tag = document.createElement('span');
-        tag.classList.add('tag');
-        tag.textContent = tagInput.value;
-        tagContainer.appendChild(tag);
-        tagInput.value = '';
+    function addTag(tagText) {
+    const tagContainer = document.querySelector('.tag-container');
+    const tag = document.createElement('span');
+    tag.classList.add('tag');
+    tag.textContent = tagText;
+    tagContainer.appendChild(tag);
 
-        tag.addEventListener('click', () => {
-          tagContainer.removeChild(tag);
-        });
-      }
+    tag.addEventListener('click', () => {
+        tagContainer.removeChild(tag);
     });
+}
+
   </script>
     <script>
     
